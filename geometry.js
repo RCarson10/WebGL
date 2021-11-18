@@ -176,10 +176,17 @@ function scallop(color)
     //define some temporary arrays to hold the vertices and colors:
     var scallopTriangleVertices = [];
     var scallopTriangleVertexColors = [];
+    var scallopTriangleNormals = [];
 
     //Next, we need to implement iteration based on the number of triangles that are in the shape:
     for ( var i = 0; i < triangleIndices.length; i++ ) {
+        let x = i % 3;
+        let startingIndex = i - x;
+        let [a, b, c] = [scallopVertices[triangleIndices[startingIndex]], scallopVertices[triangleIndices[startingIndex + 1]], scallopVertices[triangleIndices[startingIndex + 2]]]
+        let pointNormal = normal(a,b,c);
+        scallopTriangleNormals.push(pointNormal);
         scallopTriangleVertices.push( scallopVertices[triangleIndices[i]] );
+
         scallopTriangleVertexColors.push( scallopVertexColors[colorIndices[i]] );
     }
 
@@ -1584,6 +1591,12 @@ function cylinder(numSlices, numStacks, caps, color) {
         var topColor = [0.30, 0.30, 0.30, 1.0];
         var bottomColor = [0.35, 0.35, 0.35, 1.0];
     }
+    else if (color == "beige")
+    {
+        var sideColor =   [ 0.702, 0.5765, 0.4667, 1.0 ];
+        var topColor =  [ 0.702, 0.5765, 0.4667, 1.0 ];
+        var bottomColor =  [ 0.702, 0.5765, 0.4667, 1.0 ];
+    }
     else
     {
         //Rainbow
@@ -2067,4 +2080,11 @@ function checkerboardTexture(size, rows, columns)
     gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
 
     return texture;
+}
+function normal(a, b, c)
+{
+    const v1 = subtract(b, a);
+    const v2 = subtract(c, a);
+
+    return normalize(cross(v1, v2));
 }

@@ -1,8 +1,8 @@
 "use strict";
 
 var canvas;
-var gl;
-var viewerPos, projection;
+var gl, program;
+
 
 var pointsArray = [];
 var colorsArray = [];
@@ -124,20 +124,24 @@ window.onload = function init() {
     var chair3 = [];
 
     //Construct the back of the chair:
-    var scallop1 = scallop(1);
-    scallop1.scale(1.0, 1.0, 1.0);
-    scallop1.translate(-1.0, 0, 0); //Move the whole thing to the side
+    var scallop1 = cylinder(72,3,true,"beige");
+    var scallopBase1 = cube(1, "beige");
+    scallop1.scale(1.405, 0.248, 1.0);
+    scallop1.translate(-1.0, 0, 0.75); //Move the whole thing to the side
+    scallop1.rotate(270,[1,0,0]);
+    scallopBase1.scale(1.4, 1.75, 0.25);
+    scallopBase1.translate(-1.0, 0, 0);
     //All the chairs are the same, so we can add all the same objects to them
     //The duplication of the chairs comes later, when different transformations are added to the second and third chairs,
     //and those are added to the points array as well
     chair1.push(scallop1); //Push to the first chair
-
+    chair1.push(scallopBase1);
     //Construct the seat of the chair:
-    var scallop2 = scallop(1);
-    scallop2.scale(1.0, 1.0, 1.0);
+    var scallop2 = cube(1,"beige");
+    scallop2.scale(1.4, 1.0, 0.5);
     scallop2.rotate(-90, [1, 0, 0]);
     scallop2.rotate(180, [0, 1, 0]);
-    scallop2.translate(0, -0.9, 0.9);
+    scallop2.translate(0.0, -0.9, 0.50);
     scallop2.translate(-1.0, 0, 0); //Move the whole thing to the side
     chair1.push(scallop2); //Push to the first chair
 
@@ -170,20 +174,26 @@ window.onload = function init() {
 
     //CHAIR B -----------------------------------------------------------
     //Construct the back of the SECOND chair:
-    var scallop3 = scallop(1);
-    scallop3.scale(1.0, 1.0, 1.0);
-    scallop3.translate(-1.0, 0, 0); //Move the whole thing to the side
+    var scallop3 = cylinder(72,3,true,"beige");
+    var scallopBase2 = cube(1, "beige");
+    scallop3.scale(1.405, 0.248, 1.0);
+    scallop3.translate(-1.0, 0, 0.75); //Move the whole thing to the side
+    scallop3.rotate(270,[1,0,0]);
+    scallopBase2.scale(1.4, 1.75, 0.25);
+    scallopBase2.translate(-1.0, 0, 0);
     //All the chairs are the same, so we can add all the same objects to them
     //The duplication of the chairs comes later, when different transformations are added to the second and third chairs,
     //and those are added to the points array as well
     chair2.push(scallop3); //Push to the first chair
+    chair2.push(scallopBase2);
+
 
     //Construct the seat of the chair:
-    var scallop4 = scallop(1);
-    scallop4.scale(1.0, 1.0, 1.0);
+    var scallop4 = cube(1,"beige");
+    scallop4.scale(1.4, 1.0, 0.5);
     scallop4.rotate(-90, [1, 0, 0]);
     scallop4.rotate(180, [0, 1, 0]);
-    scallop4.translate(0, -0.9, 0.9);
+    scallop4.translate(0, -0.9, 0.5);
     scallop4.translate(-1.0, 0, 0); //Move the whole thing to the side
     chair2.push(scallop4); //Push to the first chair
 
@@ -214,20 +224,25 @@ window.onload = function init() {
 
     //CHAIR C -----------------------------------------------------------
     //Construct the back of the THIRD chair:
-    var scallop5 = scallop(1);
-    scallop5.scale(1.0, 1.0, 1.0);
-    scallop5.translate(-1.0, 0, 0); //Move the whole thing to the side
+    var scallop5 = cylinder(72,3,true,"beige");
+    var scallopBase3 = cube(1, "beige");
+    scallop5.scale(1.405, 0.248, 1.0);
+    scallop5.translate(-1.0, 0, 0.75); //Move the whole thing to the side
+    scallop5.rotate(270,[1,0,0]);
+    scallopBase3.scale(1.4, 1.75, 0.25);
+    scallopBase3.translate(-1.0, 0, 0);
     //All the chairs are the same, so we can add all the same objects to them
     //The duplication of the chairs comes later, when different transformations are added to the second and third chairs,
     //and those are added to the points array as well
     chair3.push(scallop5); //Push to the first chair
+    chair3.push(scallopBase3);
 
     //Construct the seat of the chair:
-    var scallop6 = scallop(1);
-    scallop6.scale(1.0, 1.0, 1.0);
+    var scallop6 = cube(1, "beige");
+    scallop6.scale(1.4, 1.25, 0.5);
     scallop6.rotate(-90, [1, 0, 0]);
     scallop6.rotate(180, [0, 1, 0]);
-    scallop6.translate(0, -0.9, 0.9);
+    scallop6.translate(0, -1.0, 0.5);
     scallop6.translate(-1.0, 0, 0); //Move the whole thing to the side
     chair3.push(scallop6); //Push to the first chair
 
@@ -644,6 +659,7 @@ window.onload = function init() {
         colorsArray = colorsArray.concat(chair1[i].TriangleVertexColors);
         normalsArray = normalsArray.concat(chair1[i].TriangleNormals);
 
+
     }
     for (var i = 0; i < chair2.length; i++)
     {
@@ -660,6 +676,7 @@ window.onload = function init() {
 
     }
     //END CHAIR_A STEP 3------------------------------------------------------
+
 
     //SHELF STEP 3: ----------------------------------------------------------
     for (var i = 0; i < shelf.length; i++)
@@ -754,8 +771,8 @@ window.onload = function init() {
     //  Load shaders and initialize attribute buffers
     //  LEAVE IT ALONE FOR NOW
     //
-    var program = initShaders( gl, "vertex-shader", "fragment-shader" );
-    gl.useProgram( program );
+    program = initShaders( gl, "vertex-shader", "fragment-shader");
+    gl.useProgram(program);
 
     var cBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer);
@@ -764,6 +781,17 @@ window.onload = function init() {
     var vColor = gl.getAttribLocation( program, "vColor" );
     gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vColor);
+
+    var nBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, nBuffer );
+    console.log({normalsArray});
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW );
+
+
+    var vNormal = gl.getAttribLocation( program, "vNormal" );
+    gl.vertexAttribPointer( vNormal, 3, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vNormal );
+
 
     var vBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer);
@@ -775,10 +803,6 @@ window.onload = function init() {
 
     modelViewMatrixLoc = gl.getUniformLocation( program, "modelViewMatrix" );
     projectionMatrixLoc = gl.getUniformLocation( program, "projectionMatrix" );
-
-    viewerPos = vec3(0.0, 0.0, -20.0 );
-
-    projection = ortho(-1, 1, -1, 1, -100, 100);
 
     var ambientProduct = mult(myLight.lightAmbient, myMaterial.materialAmbient);
     var diffuseProduct = mult(myLight.lightDiffuse, myMaterial.materialDiffuse);
@@ -839,9 +863,6 @@ window.onload = function init() {
 
     gl.uniform1f(gl.getUniformLocation(program,
         "shininess"), myMaterial.materialShininess);
-
-    gl.uniformMatrix4fv( gl.getUniformLocation(program, "projectionMatrix"),
-        false, flatten(projection));
 
 
     //---- END MULTIPLE CAMERAS
